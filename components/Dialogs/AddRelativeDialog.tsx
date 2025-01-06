@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Person, RelationType, Relationship } from '@/types/family';  // הוספת Relationship לimport
+import { Person, RelationType, Relationship } from '@/types/family';
 import { useFamilyStore } from '@/lib/store/familyStore';
 import { HebrewDatePicker } from './HebrewDatePicker';
 
@@ -12,15 +12,25 @@ interface AddRelativeDialogProps {
   relationType: RelationType;
 }
 
+type FormData = {
+  fullName: string;
+  birthDateHebrew: string;
+  birthDateGregorian: string;
+  email: string;
+  phone: string;
+  marriageStatus: Person['marriageStatus'];
+  relationships: Relationship[];
+}
+
 export const AddRelativeDialog = ({ isOpen, onClose, relatedToId, relationType }: AddRelativeDialogProps) => {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
     fullName: '',
     birthDateHebrew: '',
     birthDateGregorian: '',
     email: '',
     phone: '',
-    marriageStatus: 'single' as const,
-    relationships: [] as Relationship[]  // הוספת מערך ריק של קשרים
+    marriageStatus: 'single',
+    relationships: []
   });
 
   const addPersonWithRelations = useFamilyStore(state => state.addPersonWithRelations);
