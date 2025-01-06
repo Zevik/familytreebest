@@ -1,7 +1,7 @@
 'use client';
 
 import { Person, RelationType } from '@/types/family';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 interface PersonCardProps {
   person: Person;
@@ -13,21 +13,38 @@ export const PersonCard = ({ person, onEdit, onAddRelative }: PersonCardProps) =
   const [isExpanded, setIsExpanded] = useState(false);
   const [showAddOptions, setShowAddOptions] = useState(false);
 
+  const handleAddClick = (e: React.MouseEvent) => {
+    e.stopPropagation(); // מונע סגירה של התפריט בלחיצה
+    setShowAddOptions(!showAddOptions);
+  };
+
+  // סוגר את התפריט כשלוחצים מחוץ לכרטיס
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+      if (!target.closest('.person-card')) {
+        setShowAddOptions(false);
+      }
+    };
+
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
+  }, []);
+
   return (
-    <div className="bg-white rounded-lg shadow-md p-4 max-w-sm relative">
-      <div className="flex justify-between items-start">
-        <h3 className="text-xl font-semibold">{person.fullName}</h3>
-        <div className="flex gap-2 items-center">
-          <button 
-            onClick={() => setShowAddOptions(!showAddOptions)}
-            className="text-blue-500 hover:text-blue-700 text-xl font-bold w-6 h-6 flex items-center justify-center"
-            aria-label="הוסף בן משפחה"
+    <div className="person-card relative bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow p-4">
+      <div className="flex justify-between items-center mb-2">
+        <h3 className="text-lg font-semibold text-gray-800">{person.fullName}</h3>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={handleAddClick}
+            className="w-8 h-8 flex items-center justify-center rounded-full bg-blue-50 text-blue-600 hover:bg-blue-100 transition-colors"
           >
             +
           </button>
-          <button 
+          <button
             onClick={() => setIsExpanded(!isExpanded)}
-            className="text-gray-500 hover:text-gray-700 w-6 h-6 flex items-center justify-center"
+            className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-50 text-gray-600 hover:bg-gray-100 transition-colors"
           >
             {isExpanded ? '−' : '⋮'}
           </button>
@@ -36,44 +53,27 @@ export const PersonCard = ({ person, onEdit, onAddRelative }: PersonCardProps) =
 
       {/* תפריט הוספת בן משפחה */}
       {showAddOptions && (
-        <div className="absolute top-14 right-4 z-10 bg-white shadow-lg rounded-md border p-2 min-w-[200px]">
+        <div className="absolute left-0 right-0 top-full mt-1 bg-white shadow-lg rounded-lg border border-gray-200 p-2 z-10">
           <div className="grid grid-cols-2 gap-2">
-            <button
-              onClick={() => {
-                onAddRelative('parent');
-                setShowAddOptions(false);
-              }}
-              className="p-2 text-sm bg-blue-100 hover:bg-blue-200 rounded"
-            >
-              הוסף הורה
-            </button>
-            <button
-              onClick={() => {
-                onAddRelative('sibling');
-                setShowAddOptions(false);
-              }}
-              className="p-2 text-sm bg-green-100 hover:bg-green-200 rounded"
-            >
-              הוסף אח/ות
-            </button>
-            <button
-              onClick={() => {
-                onAddRelative('spouse');
-                setShowAddOptions(false);
-              }}
-              className="p-2 text-sm bg-purple-100 hover:bg-purple-200 rounded"
-            >
-              הוסף בן/בת זוג
-            </button>
-            <button
-              onClick={() => {
-                onAddRelative('child');
-                setShowAddOptions(false);
-              }}
-              className="p-2 text-sm bg-yellow-100 hover:bg-yellow-200 rounded"
-            >
-              הוסף ילד/ה
-            </button>
+            {[
+              { type: 'parent', label: 'הורה', color: 'blue' },
+              { type: 'sibling', label: 'אח/ות', color: 'green' },
+              { type: 'spouse', label: 'בן/בת זוג', color: 'purple' },
+              { type: 'child', label: 'ילד/ה', color: 'yellow' },
+            ].map(({ type, label, color }) => (
+              <button
+                key={type}
+                onClick={() => {
+                  onAddRelative(type as RelationType);
+                  setShowAddOptions(false);
+                }}
+                className={`p-2 text-sm rounded-md transition-colors
+                  bg-${color}-50 hover:bg-${color}-100 
+                  text-${color}-700 hover:text-${color}-800`}
+              >
+                {label}
+              </button>
+            ))}
           </div>
         </div>
       )}
