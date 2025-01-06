@@ -14,19 +14,20 @@ export const PersonCard = ({ person, onEdit, onAddRelative }: PersonCardProps) =
   const [showAddOptions, setShowAddOptions] = useState(false);
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-4 max-w-sm">
+    <div className="bg-white rounded-lg shadow-md p-4 max-w-sm relative">
       <div className="flex justify-between items-start">
         <h3 className="text-xl font-semibold">{person.fullName}</h3>
-        <div className="flex gap-2">
+        <div className="flex gap-2 items-center">
           <button 
             onClick={() => setShowAddOptions(!showAddOptions)}
-            className="text-blue-500 hover:text-blue-700 text-xl font-bold"
+            className="text-blue-500 hover:text-blue-700 text-xl font-bold w-6 h-6 flex items-center justify-center"
+            aria-label="הוסף בן משפחה"
           >
             +
           </button>
           <button 
             onClick={() => setIsExpanded(!isExpanded)}
-            className="text-gray-500 hover:text-gray-700"
+            className="text-gray-500 hover:text-gray-700 w-6 h-6 flex items-center justify-center"
           >
             {isExpanded ? '−' : '⋮'}
           </button>
@@ -35,7 +36,7 @@ export const PersonCard = ({ person, onEdit, onAddRelative }: PersonCardProps) =
 
       {/* תפריט הוספת בן משפחה */}
       {showAddOptions && (
-        <div className="mt-2 p-2 bg-gray-50 rounded-md">
+        <div className="absolute top-14 right-4 z-10 bg-white shadow-lg rounded-md border p-2 min-w-[200px]">
           <div className="grid grid-cols-2 gap-2">
             <button
               onClick={() => {

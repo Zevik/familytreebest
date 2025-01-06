@@ -1,11 +1,12 @@
 'use client';
 
 import { PersonCard } from '@/components/PersonCard/PersonCard';
-import { TreeVisualization } from '@/components/TreeView/TreeVisualization';  // הוספת import
-import { useFamilyStore } from '@/lib/store/familyStore';
-import { RelationType } from '@/types/family';
-import { useState } from 'react';
+import { TreeVisualization } from '@/components/TreeView/TreeVisualization';
 import { EditPersonDialog } from '@/components/Dialogs/EditPersonDialog';
+import { AddRelativeDialog } from '@/components/Dialogs/AddRelativeDialog'; // הוספת import חסר
+import { useFamilyStore } from '@/lib/store/familyStore';
+import { RelationType, Person } from '@/types/family'; // הוספת Person לimport
+import { useState } from 'react';
 
 export default function Home() {
   const people = useFamilyStore(state => state.people);
