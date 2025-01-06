@@ -81,4 +81,124 @@ function addSpouseRelationships(
   });
 }
 
+function addChildRelationships(
+  newPerson: Person,
+  parent: Person,
+  allPeople: Person[],
+  relationships: Relationship[]
+) {
+  // קשר עם ההורה השני (אם קיים)
+  const otherParent = findOtherParent(parent, allPeople);
+  if (otherParent) {
+    relationships.push({
+      relatedPersonId: otherParent.id,
+      type: 'parent'
+    });
+  }
+
+  // קשר עם האחים
+  const siblings = findSiblings(parent, allPeople);
+  siblings.forEach(sibling => {
+    relationships.push({
+      relatedPersonId: sibling.id,
+      type: 'sibling'
+    });
+  });
+
+  // קשר עם הסבים
+  const grandparents = findGrandparents(newPerson, parent, allPeople);
+  grandparents.forEach(gp => {
+    relationships.push({
+      relatedPersonId: gp.id,
+      type: 'grandparent'
+    });
+  });
+}
+
+function addParentRelationships(
+  newPerson: Person,
+  child: Person,
+  allPeople: Person[],
+  relationships: Relationship[]
+) {
+  // קשר עם בן/בת הזוג (אם יש)
+  const spouse = findSpouse(newPerson, allPeople);
+  if (spouse) {
+    child.relationships.push({
+      relatedPersonId: spouse.id,
+      type: 'parent'
+    });
+  }
+
+  // קשר עם הנכדים (ילדי הילד)
+  const grandchildren = findChildren(child, allPeople);
+  grandchildren.forEach(gc => {
+    relationships.push({
+      relatedPersonId: gc.id,
+      type: 'grandchild'
+    });
+  });
+}
+
+function addSiblingRelationships(
+  newPerson: Person,
+  sibling: Person,
+  allPeople: Person[],
+  relationships: Relationship[]
+) {
+  // קשר עם ההורים המשותפים
+  const parents = findParents(sibling, allPeople);
+  parents.forEach(parent => {
+    relationships.push({
+      relatedPersonId: parent.id,
+      type: 'parent'
+    });
+  });
+
+  // קשר עם האחיינים (ילדי האח)
+  const nephewsNieces = findChildren(sibling, allPeople);
+  nephewsNieces.forEach(nn => {
+    relationships.push({
+      relatedPersonId: nn.id,
+      type: 'nephew-niece'
+    });
+  });
+}
+
+function findOtherParent(person: Person, allPeople: Person[]): Person | null {
+  const spouses = allPeople.filter(p => 
+    person.relationships.some(r => 
+      r.relatedPersonId === p.id && 
+      (r.type === 'spouse' || r.type === 'ex-spouse')
+    )
+  );
+  return spouses[0] || null;
+}
+
+function findGrandparents(person: Person, parent: Person, allPeople: Person[]): Person[] {
+  return findParents(parent, allPeople);
+}
+
+function findSiblings(person: Person, allPeople: Person[]): Person[] {
+  const parents = findParents(person, allPeople);
+  if (parents.length === 0) return [];
+
+  return allPeople.filter(p => 
+    p.id !== person.id &&
+    parents.some(parent =>
+      p.relationships.some(r =>
+        r.relatedPersonId === parent.id && r.type === 'parent'
+      )
+    )
+  );
+}
+
+function findSpouse(person: Person, allPeople: Person[]): Person | null {
+  return allPeople.find(p =>
+    person.relationships.some(r =>
+      r.relatedPersonId === p.id && r.type === 'spouse'
+    )
+  ) || null;
+}
+
 // ...המשך פונקציות עזר נוספות
