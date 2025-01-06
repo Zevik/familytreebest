@@ -1,16 +1,16 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { Person, Relationship } from '@/types/family';
+import { Person, Relationship, RelationType } from '@/types/family';
 import { calculateNewRelationships, getReciprocalRelationType } from '@/lib/utils/familyRelationships';
 
 interface FamilyState {
   people: Person[];
-  addPerson: (person: Omit<Person, 'id'>) => void;
+  addPerson: (personData: Omit<Person, 'id'>) => void;
   updatePerson: (id: string, updates: Partial<Person>) => void;
   addRelationship: (personId: string, relationship: Relationship) => void;
   calculateRelationships: (personId: string) => void;
   addPersonWithRelations: (
-    person: Omit<Person, 'id'>, 
+    personData: Omit<Person, 'id'>, 
     relatedToId: string, 
     relationType: RelationType
   ) => void;
@@ -137,6 +137,7 @@ export const useFamilyStore = create(
         localStorage.setItem('familyTree', JSON.stringify(state.people));
       },
 
+      // תיקון פונקציית loadFromStorage
       loadFromStorage: () => {
         const stored = localStorage.getItem('familyTree');
         if (stored) {
