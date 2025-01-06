@@ -24,6 +24,10 @@ export default function Home() {
     setIsAddingRelative(true);
   };
 
+  const handlePersonClick = (person: Person) => {
+    setEditingPerson(person);
+  };
+
   return (
     <main className="min-h-screen p-4 md:p-8">
       <div className="max-w-6xl mx-auto">
@@ -57,7 +61,7 @@ export default function Home() {
             searchQuery ? p.fullName.includes(searchQuery) : true
           )}
           layout={treeLayout}
-          onPersonClick={(person) => setSelectedPerson(person.id)}
+          onPersonClick={handlePersonClick}
         />
 
         {/* Existing PersonCard Grid */}
