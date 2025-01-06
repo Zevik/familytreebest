@@ -1,12 +1,85 @@
+'use client';
+
+import { PersonCard } from '@/components/PersonCard/PersonCard';
+import { TreeVisualization } from '@/components/TreeView/TreeVisualization';  // הוספת import
+import { useFamilyStore } from '@/lib/store/familyStore';
+import { RelationType } from '@/types/family';
+import { useState } from 'react';
+
 export default function Home() {
+  const people = useFamilyStore(state => state.people);
+  const [selectedPerson, setSelectedPerson] = useState<string | null>(null);
+  const [treeLayout, setTreeLayout] = useState<'vertical' | 'horizontal' | 'network'>('vertical');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [isAddingRelative, setIsAddingRelative] = useState(false);
+  const [addRelativeData, setAddRelativeData] = useState<{
+    personId: string;
+    type: RelationType;
+  } | null>(null);
+
+  const handleAddRelative = (personId: string, type: RelationType) => {
+    setAddRelativeData({ personId, type });
+    setIsAddingRelative(true);
+  };
+
   return (
-    <main className="min-h-screen p-8">
-      <div className="max-w-4xl mx-auto">
-        <h1 className="text-3xl font-bold text-center mb-8">עץ המשפחה שלי</h1>
-        <div className="bg-white p-6 rounded-lg shadow-md">
-          <p className="text-center text-gray-600">ברוכים הבאים לעץ המשפחה</p>
+    <main className="min-h-screen p-4 md:p-8">
+      <div className="max-w-6xl mx-auto">
+        <header className="mb-8">
+          <h1 className="text-3xl font-bold text-center mb-2">עץ המשפחה שלי</h1>
+          
+          {/* Search and Layout Controls */}
+          <div className="flex gap-4 justify-center mb-4">
+            <input
+              type="search"
+              placeholder="חיפוש בן משפחה..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="px-4 py-2 border rounded-lg"
+            />
+            <select 
+              value={treeLayout}
+              onChange={(e) => setTreeLayout(e.target.value as any)}
+              className="px-4 py-2 border rounded-lg"
+            >
+              <option value="vertical">עץ אנכי</option>
+              <option value="horizontal">עץ אופקי</option>
+              <option value="network">רשת</option>
+            </select>
+          </div>
+        </header>
+
+        {/* Tree Visualization */}
+        <TreeVisualization
+          people={people.filter(p => 
+            searchQuery ? p.fullName.includes(searchQuery) : true
+          )}
+          layout={treeLayout}
+          onPersonClick={(person) => setSelectedPerson(person.id)}
+        />
+
+        {/* Existing PersonCard Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-8">
+          {people.map(person => (
+            <PersonCard
+              key={person.id}
+              person={person}
+              onAddRelative={(type) => handleAddRelative(person.id, type)}
+              onEdit={() => setSelectedPerson(person.id)}
+            />
+          ))}
         </div>
       </div>
+
+      {/* הוספת הדיאלוג */}
+      {isAddingRelative && addRelativeData && (
+        <AddRelativeDialog
+          isOpen={isAddingRelative}
+          onClose={() => setIsAddingRelative(false)}
+          relatedToId={addRelativeData.personId}
+          relationType={addRelativeData.type}
+        />
+      )}
     </main>
-  )
+  );
 }
