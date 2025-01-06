@@ -5,6 +5,7 @@ import { TreeVisualization } from '@/components/TreeView/TreeVisualization';  //
 import { useFamilyStore } from '@/lib/store/familyStore';
 import { RelationType } from '@/types/family';
 import { useState } from 'react';
+import { EditPersonDialog } from '@/components/Dialogs/EditPersonDialog';
 
 export default function Home() {
   const people = useFamilyStore(state => state.people);
@@ -16,6 +17,7 @@ export default function Home() {
     personId: string;
     type: RelationType;
   } | null>(null);
+  const [editingPerson, setEditingPerson] = useState<Person | null>(null);
 
   const handleAddRelative = (personId: string, type: RelationType) => {
     setAddRelativeData({ personId, type });
@@ -65,7 +67,7 @@ export default function Home() {
               key={person.id}
               person={person}
               onAddRelative={(type) => handleAddRelative(person.id, type)}
-              onEdit={() => setSelectedPerson(person.id)}
+              onEdit={() => setEditingPerson(person)}
             />
           ))}
         </div>
@@ -78,6 +80,15 @@ export default function Home() {
           onClose={() => setIsAddingRelative(false)}
           relatedToId={addRelativeData.personId}
           relationType={addRelativeData.type}
+        />
+      )}
+
+      {/* Edit Dialog */}
+      {editingPerson && (
+        <EditPersonDialog
+          isOpen={!!editingPerson}
+          onClose={() => setEditingPerson(null)}
+          person={editingPerson}
         />
       )}
     </main>
