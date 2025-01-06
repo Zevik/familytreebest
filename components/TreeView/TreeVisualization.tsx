@@ -147,7 +147,7 @@ function renderHierarchicalLayout(
 function renderNetworkLayout(
   svg: d3.Selection<SVGGElement, unknown, null, undefined>,
   data: any,
-  onPersonClick: (person: Person) => void
+  onClick: (person: Person) => void
 ) {
   const simulation = d3.forceSimulation()
     .force('charge', d3.forceManyBody().strength(-300))

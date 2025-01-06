@@ -1,3 +1,5 @@
+'use client';
+
 import { useState } from 'react';
 import { Person, RelationType } from '@/types/family';
 import { useFamilyStore } from '@/lib/store/familyStore';
@@ -17,7 +19,8 @@ export const AddRelativeDialog = ({ isOpen, onClose, relatedToId, relationType }
     birthDateGregorian: '',
     email: '',
     phone: '',
-    marriageStatus: 'single' as const
+    marriageStatus: 'single' as const,
+    relationships: [] as Relationship[]  // הוספת מערך ריק של קשרים
   });
 
   const addPersonWithRelations = useFamilyStore(state => state.addPersonWithRelations);

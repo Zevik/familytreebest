@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Person, RelationType } from '@/types/family';
+import { Person, RelationType, Relationship } from '@/types/family';
 import { useFamilyStore } from '@/lib/store/familyStore';
 
 interface AddPersonFormProps {
@@ -15,11 +15,11 @@ export const AddPersonForm = ({ relatedToId, relationType, onComplete }: AddPers
     birthDateGregorian: '',
     email: '',
     phone: '',
-    marriageStatus: 'single' as const
+    marriageStatus: 'single' as const,
+    relationships: [] as Relationship[]
   });
 
   const addPerson = useFamilyStore(state => state.addPerson);
-  const addRelationship = useFamilyStore(state => state.addRelationship);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
