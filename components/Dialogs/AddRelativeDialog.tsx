@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Person, RelationType } from '@/types/family';
+import { Person, RelationType, Relationship } from '@/types/family';  // הוספת Relationship לimport
 import { useFamilyStore } from '@/lib/store/familyStore';
 import { HebrewDatePicker } from './HebrewDatePicker';
 
