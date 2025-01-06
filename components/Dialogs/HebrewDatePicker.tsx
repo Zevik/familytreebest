@@ -76,7 +76,7 @@ export const HebrewDatePicker = ({ value, onChange }: HebrewDatePickerProps) => 
           updateDate(newYear, month, day);
         }}
         className="p-2 border rounded"
-      ></select>
+      >
         {Array.from({length: 100}, (_, i) => 5784 - i).map(y => (
           <option key={y} value={y}>{y}</option>
         ))}
