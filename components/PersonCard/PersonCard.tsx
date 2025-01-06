@@ -14,8 +14,14 @@ export const PersonCard = ({ person, onEdit, onAddRelative }: PersonCardProps) =
   const [showAddOptions, setShowAddOptions] = useState(false);
 
   const handleAddClick = (e: React.MouseEvent) => {
-    e.stopPropagation(); // מונע סגירה של התפריט בלחיצה
-    setShowAddOptions(!showAddOptions);
+    e.preventDefault();
+    e.stopPropagation();
+    setShowAddOptions(prev => !prev);
+  };
+
+  const handleOptionClick = (type: RelationType) => {
+    onAddRelative(type);
+    setShowAddOptions(false);
   };
 
   // סוגר את התפריט כשלוחצים מחוץ לכרטיס
@@ -38,7 +44,7 @@ export const PersonCard = ({ person, onEdit, onAddRelative }: PersonCardProps) =
         <div className="flex items-center gap-2">
           <button
             onClick={handleAddClick}
-            className="w-8 h-8 flex items-center justify-center rounded-full bg-blue-50 text-blue-600 hover:bg-blue-100 transition-colors"
+            className="relative z-20 w-8 h-8 flex items-center justify-center rounded-full bg-blue-50 text-blue-600 hover:bg-blue-100 transition-colors"
           >
             +
           </button>
@@ -53,28 +59,24 @@ export const PersonCard = ({ person, onEdit, onAddRelative }: PersonCardProps) =
 
       {/* תפריט הוספת בן משפחה */}
       {showAddOptions && (
-        <div className="absolute left-0 right-0 top-full mt-1 bg-white shadow-lg rounded-lg border border-gray-200 p-2 z-10">
-          <div className="grid grid-cols-2 gap-2">
-            {[
-              { type: 'parent', label: 'הורה', color: 'blue' },
-              { type: 'sibling', label: 'אח/ות', color: 'green' },
-              { type: 'spouse', label: 'בן/בת זוג', color: 'purple' },
-              { type: 'child', label: 'ילד/ה', color: 'yellow' },
-            ].map(({ type, label, color }) => (
-              <button
-                key={type}
-                onClick={() => {
-                  onAddRelative(type as RelationType);
-                  setShowAddOptions(false);
-                }}
-                className={`p-2 text-sm rounded-md transition-colors
-                  bg-${color}-50 hover:bg-${color}-100 
-                  text-${color}-700 hover:text-${color}-800`}
-              >
-                {label}
-              </button>
-            ))}
-          </div>
+        <div 
+          className="absolute right-0 top-12 w-48 bg-white shadow-xl rounded-lg border border-gray-200 p-2 z-30"
+          onClick={(e) => e.stopPropagation()}
+        >
+          { [
+            { type: 'parent', label: 'הוסף הורה', bgColor: 'bg-blue-50', hoverColor: 'hover:bg-blue-100' },
+            { type: 'sibling', label: 'הוסף אח/ות', bgColor: 'bg-green-50', hoverColor: 'hover:bg-green-100' },
+            { type: 'spouse', label: 'הוסף בן/בת זוג', bgColor: 'bg-purple-50', hoverColor: 'hover:bg-purple-100' },
+            { type: 'child', label: 'הוסף ילד/ה', bgColor: 'bg-yellow-50', hoverColor: 'hover:bg-yellow-100' },
+          ].map(({ type, label, bgColor, hoverColor }) => (
+            <button
+              key={type}
+              onClick={() => handleOptionClick(type as RelationType)}
+              className={`w-full text-right px-4 py-2 mb-1 rounded-md ${bgColor} ${hoverColor} transition-colors`}
+            >
+              {label}
+            </button>
+          ))}
         </div>
       )}
 

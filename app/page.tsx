@@ -10,7 +10,6 @@ import { useState } from 'react';
 
 export default function Home() {
   const people = useFamilyStore(state => state.people);
-  const [selectedPerson, setSelectedPerson] = useState<string | null>(null);
   const [treeLayout, setTreeLayout] = useState<'vertical' | 'horizontal' | 'network'>('vertical');
   const [searchQuery, setSearchQuery] = useState('');
   const [isAddingRelative, setIsAddingRelative] = useState(false);

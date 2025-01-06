@@ -1,14 +1,14 @@
 'use client';
 
 import { useState } from 'react';
-import { HebrewCalendar, HDate, months } from '@hebcal/core';
+import { HDate, months } from '@hebcal/core';
 
 interface HebrewDatePickerProps {
   value: string;
   onChange: (hebrewDate: string, gregorianDate: string) => void;
 }
 
-export const HebrewDatePicker = ({ value, onChange }: HebrewDatePickerProps) => {
+export const HebrewDatePicker = ({ onChange }: HebrewDatePickerProps) => {
   const [year, setYear] = useState(5784);
   const [month, setMonth] = useState(months.TISHREI);
   const [day, setDay] = useState(1);

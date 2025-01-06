@@ -38,7 +38,7 @@ export const TreeVisualization = ({ people, layout, onPersonClick }: TreeVisuali
 
     // Render tree based on layout
     renderTree(svg, treeData, treeLayout, layout, onPersonClick);
-  }, [people, layout]);
+  }, [people, layout, onPersonClick]);
 
   return (
     <div className="w-full overflow-auto">
