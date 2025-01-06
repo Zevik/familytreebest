@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { Person, Relationship } from '@/types/family';
+import { calculateNewRelationships, getReciprocalRelationType } from '@/lib/utils/familyRelationships';
 
 interface FamilyState {
   people: Person[];
@@ -82,26 +83,52 @@ export const useFamilyStore = create(
     
       addPersonWithRelations: (personData, relatedToId, relationType) => {
         const newId = crypto.randomUUID();
+        const state = get();
+        const relatedPerson = state.people.find(p => p.id === relatedToId);
         
-        // הוספת האדם החדש
-        set(state => ({
-          people: [...state.people, { ...personData, id: newId, relationships: [{
+        if (!relatedPerson) return;
+
+        const newPerson: Person = {
+          ...personData,
+          id: newId,
+          relationships: [{
             relatedPersonId: relatedToId,
             type: relationType
-          }] }]
-        }));
-    
-        // עדכון הקשר ההדדי
-        const reciprocalType = getReciprocalRelationType(relationType);
-        if (reciprocalType) {
-          get().addRelationship(relatedToId, {
-            relatedPersonId: newId,
-            type: reciprocalType
-          });
-        }
-    
-        // חישוב כל הקשרים העקיפים
-        get().calculateRelationships(newId);
+          }]
+        };
+
+        // חישוב כל הקשרים החדשים
+        const newRelationships = calculateNewRelationships(
+          newPerson,
+          relatedPerson,
+          state.people,
+          relationType
+        );
+
+        // הוספת כל הקשרים החדשים
+        newPerson.relationships = [...newPerson.relationships, ...newRelationships];
+
+        // עדכון הקשרים ההדדיים
+        const updatedPeople = state.people.map(person => {
+          const reciprocalRelations = newRelationships
+            .filter(rel => rel.relatedPersonId === person.id)
+            .map(rel => ({
+              relatedPersonId: newId,
+              type: getReciprocalRelationType(rel.type) || rel.type
+            }));
+
+          if (reciprocalRelations.length > 0) {
+            return {
+              ...person,
+              relationships: [...person.relationships, ...reciprocalRelations]
+            };
+          }
+          return person;
+        });
+
+        set({
+          people: [...updatedPeople, newPerson]
+        });
       },
 
       // הוספת פונקציונליות סנכרון
