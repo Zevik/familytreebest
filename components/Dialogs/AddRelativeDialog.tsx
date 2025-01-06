@@ -62,7 +62,46 @@ export const AddRelativeDialog = ({ isOpen, onClose, relatedToId, relationType }
             />
           </div>
 
-          {/* יתר השדות... */}
+          {/* טלפון */}
+          <div>
+            <label className="block text-sm font-medium mb-1">טלפון</label>
+            <input
+              type="tel"
+              dir="ltr"
+              value={formData.phone}
+              onChange={e => setFormData(prev => ({ ...prev, phone: e.target.value }))}
+              className="w-full p-2 border rounded"
+            />
+          </div>
+
+          {/* אימייל */}
+          <div>
+            <label className="block text-sm font-medium mb-1">אימייל</label>
+            <input
+              type="email"
+              dir="ltr"
+              value={formData.email}
+              onChange={e => setFormData(prev => ({ ...prev, email: e.target.value }))}
+              className="w-full p-2 border rounded"
+            />
+          </div>
+
+          {/* סטטוס נישואין */}
+          <div>
+            <label className="block text-sm font-medium mb-1">סטטוס נישואין</label>
+            <select
+              value={formData.marriageStatus}
+              onChange={e => setFormData(prev => ({ 
+                ...prev, 
+                marriageStatus: e.target.value as Person['marriageStatus']
+              }))}
+              className="w-full p-2 border rounded"
+            >
+              <option value="single">רווק/ה</option>
+              <option value="married">נשוי/אה</option>
+              <option value="divorced">גרוש/ה</option>
+            </select>
+          </div>
 
           <div className="flex gap-2 justify-end mt-6">
             <button
