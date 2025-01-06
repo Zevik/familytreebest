@@ -1,16 +1,32 @@
 'use client';
 
 import { useState } from 'react';
-import { HDate, months } from '@hebcal/core';
+import { HDate } from '@hebcal/core';
 
 interface HebrewDatePickerProps {
   value: string;
   onChange: (hebrewDate: string, gregorianDate: string) => void;
 }
 
-export const HebrewDatePicker = ({ onChange }: HebrewDatePickerProps) => {
+// Define Hebrew months
+const HEBREW_MONTHS = [
+  { name: 'תשרי', value: 1 },
+  { name: 'חשון', value: 2 },
+  { name: 'כסלו', value: 3 },
+  { name: 'טבת', value: 4 },
+  { name: 'שבט', value: 5 },
+  { name: 'אדר', value: 6 },
+  { name: 'ניסן', value: 7 },
+  { name: 'אייר', value: 8 },
+  { name: 'סיון', value: 9 },
+  { name: 'תמוז', value: 10 },
+  { name: 'אב', value: 11 },
+  { name: 'אלול', value: 12 }
+];
+
+export const HebrewDatePicker = ({ value, onChange }: HebrewDatePickerProps) => {
   const [year, setYear] = useState(5784);
-  const [month, setMonth] = useState(months.TISHREI);
+  const [month, setMonth] = useState(1);  // תשרי
   const [day, setDay] = useState(1);
 
   const updateDate = (y: number, m: number, d: number) => {
@@ -47,7 +63,7 @@ export const HebrewDatePicker = ({ onChange }: HebrewDatePickerProps) => {
         }}
         className="p-2 border rounded"
       >
-        {Object.entries(months).map(([name, value]) => (
+        {HEBREW_MONTHS.map(({ name, value }) => (
           <option key={value} value={value}>{name}</option>
         ))}
       </select>
@@ -60,7 +76,7 @@ export const HebrewDatePicker = ({ onChange }: HebrewDatePickerProps) => {
           updateDate(newYear, month, day);
         }}
         className="p-2 border rounded"
-      >
+      ></select>
         {Array.from({length: 100}, (_, i) => 5784 - i).map(y => (
           <option key={y} value={y}>{y}</option>
         ))}
